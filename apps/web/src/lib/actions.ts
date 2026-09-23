@@ -10,7 +10,7 @@ import {
   uniqueSlug,
 } from "@comlabs/cms-core";
 import { generateApiKey } from "@comlabs/cms-core/server";
-import { prisma, type Prisma } from "@comlabs/cms-db";
+import { prisma, toJson } from "@comlabs/cms-db";
 import {
   createContent,
   deleteContent,
@@ -75,8 +75,8 @@ export async function createOrganization(
             slug: preset.slug,
             builtIn: true,
             icon: preset.icon,
-            schema: preset.schema as unknown as Prisma.InputJsonValue,
-            seoTemplate: preset.seoTemplate as unknown as Prisma.InputJsonValue,
+            schema: toJson(preset.schema),
+            seoTemplate: toJson(preset.seoTemplate),
           })),
         },
       },

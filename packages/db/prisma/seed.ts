@@ -12,6 +12,7 @@ import {
 } from "@comlabs/cms-core";
 import { generateApiKey, sanitizeContentHtml } from "@comlabs/cms-core/server";
 import { PrismaClient } from "@prisma/client";
+import { toJson } from "../src/index";
 
 const prisma = new PrismaClient();
 
@@ -51,8 +52,8 @@ async function main() {
       update: {
         name: preset.name,
         icon: preset.icon,
-        schema: preset.schema,
-        seoTemplate: preset.seoTemplate,
+        schema: toJson(preset.schema),
+        seoTemplate: toJson(preset.seoTemplate),
       },
       create: {
         orgId: org.id,
@@ -60,8 +61,8 @@ async function main() {
         slug: preset.slug,
         builtIn: true,
         icon: preset.icon,
-        schema: preset.schema,
-        seoTemplate: preset.seoTemplate,
+        schema: toJson(preset.schema),
+        seoTemplate: toJson(preset.seoTemplate),
       },
     });
   }

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Prisma } from "@prisma/client";
 
 export * from "@prisma/client";
 export { PrismaClient };
@@ -25,4 +25,16 @@ export const prisma: PrismaClient =
 
 if (process.env.NODE_ENV !== "production") {
   globalThis.__comlabsCmsPrisma = prisma;
+}
+
+/**
+ * Cast a typed object to Prisma's JSON input type.
+ *
+ * Prisma's `InputJsonValue` demands an index signature, which a precise
+ * interface like `ContentTypeSchema` deliberately does not have. Rather than
+ * loosening those interfaces or scattering casts at every call site, the
+ * conversion is funnelled through here.
+ */
+export function toJson<T>(value: T): Prisma.InputJsonValue {
+  return value as unknown as Prisma.InputJsonValue;
 }
