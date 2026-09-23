@@ -55,12 +55,29 @@ pnpm install
 cp .env.example .env            # set DATABASE_URL and BETTER_AUTH_SECRET
 pnpm db:generate
 pnpm db:migrate
-pnpm db:seed                    # optional demo org; prints an API key once
 pnpm dev
 ```
 
 Open http://localhost:3000, create an account, and the onboarding step creates
 your organization with Blog and Case Study content types ready to use.
+
+### Demo content
+
+To see it with something in it, sign up first, then fill your organization with
+invented posts, FAQs, a case study and generated cover art:
+
+```bash
+LOCAL_MEDIA_DIR="$PWD/apps/web/.media" pnpm db:demo
+```
+
+`pnpm db:demo <org-slug>` targets a specific organization; with no argument it
+fills the most recently created one. It is idempotent, so re-running updates the
+same rows. `LOCAL_MEDIA_DIR` must match what the server uses, or the cover
+images land where it cannot serve them — the script tells you if it is unset.
+
+`pnpm db:seed` is the other path: it creates a self-contained "demo"
+organization from scratch and prints an API key once, for trying the REST and
+MCP endpoints without signing in.
 
 Generate a secret with `openssl rand -base64 32`.
 

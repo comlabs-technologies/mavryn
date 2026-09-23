@@ -16,7 +16,8 @@
     "seed": "tsx prisma/seed.ts",
     "studio": "prisma studio",
     "build": "prisma generate",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "demo": "tsx prisma/demo-seed.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

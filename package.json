@@ -16,7 +16,8 @@
     "db:migrate": "pnpm --filter @comlabs/cms-db migrate",
     "db:push": "pnpm --filter @comlabs/cms-db push",
     "db:seed": "pnpm --filter @comlabs/cms-db seed",
-    "db:studio": "pnpm --filter @comlabs/cms-db studio"
+    "db:studio": "pnpm --filter @comlabs/cms-db studio",
+    "db:demo": "pnpm --filter @comlabs/cms-db demo"
   },
   "devDependencies": {
     "turbo": "^2.5.5",
