@@ -1,0 +1,28 @@
+{
+  "name": "@comlabs/cms-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./seo": "./src/seo/index.ts",
+    "./content-types": "./src/content-types/index.ts"
+  },
+  "scripts": {
+    "build": "echo \"@comlabs/cms-core is consumed from source via transpilePackages\"",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "sanitize-html": "^2.14.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/sanitize-html": "^2.13.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5",
+    "@types/node": "^22.10.7"
+  }
+}
