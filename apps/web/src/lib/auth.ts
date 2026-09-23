@@ -26,7 +26,13 @@ export const enabledOAuthProviders = Object.keys(oauthProviders());
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL,
+  // RENDER_EXTERNAL_URL is injected by Render at runtime, which avoids having
+  // to know the deployment's URL at build time. An explicit BETTER_AUTH_URL
+  // still wins, for custom domains.
+  baseURL:
+    process.env.BETTER_AUTH_URL ??
+    process.env.RENDER_EXTERNAL_URL ??
+    process.env.NEXT_PUBLIC_APP_URL,
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 10,

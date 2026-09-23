@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { prisma } from "@comlabs/cms-db";
 import { ApiKeysPanel } from "@/components/settings/api-keys-panel";
 import { IntegrationSnippets } from "@/components/settings/integration-snippets";
@@ -24,7 +25,14 @@ export default async function SettingsPage() {
     }),
   ]);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  // Derived from the request so the copy-paste snippets always carry the host
+  // the user is actually on, whatever the deployment is called.
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("host");
+  const proto = requestHeaders.get("x-forwarded-proto") ?? "https";
+  const appUrl = host
+    ? `${proto}://${host}`
+    : (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
 
   return (
     <div className="grid gap-8">
