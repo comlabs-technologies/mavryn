@@ -1,0 +1,232 @@
+/*
+ * Optional stylesheet for @comlabs/cms-sdk.
+ *
+ * Import it for a working look out of the box:
+ *     import "@comlabs/cms-sdk/styles.css";
+ *
+ * Everything is driven by custom properties, so overriding the tokens on a
+ * parent element restyles every component. Skip the import entirely and target
+ * the `cms-*` class names if you would rather start from nothing.
+ */
+
+.cms-list,
+.cms-article,
+.cms-faq {
+  --cms-ink: #16161a;
+  --cms-muted: #6b6b76;
+  --cms-line: #e6e6e3;
+  --cms-accent: #1d4ed8;
+  --cms-surface: #ffffff;
+  --cms-radius: 0.75rem;
+  --cms-measure: 68ch;
+  color: var(--cms-ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  .cms-list,
+  .cms-article,
+  .cms-faq {
+    --cms-ink: #f4f4f5;
+    --cms-muted: #a1a1aa;
+    --cms-line: #2a2a2e;
+    --cms-accent: #93b4ff;
+    --cms-surface: #17171a;
+  }
+}
+
+.cms-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- list --- */
+
+.cms-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem; }
+.cms-list--minimal { gap: 1.75rem; max-width: var(--cms-measure); }
+.cms-list--grid,
+.cms-list--marketing { grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
+.cms-list--magazine { gap: 3rem; }
+.cms-list--documentation { gap: 0.75rem; }
+
+.cms-card__link {
+  display: grid;
+  gap: 0.875rem;
+  color: inherit;
+  text-decoration: none;
+}
+.cms-list--magazine .cms-card__link { gap: 1.25rem; }
+
+.cms-card__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--cms-radius);
+  background: var(--cms-line);
+}
+.cms-list--magazine .cms-card__image { aspect-ratio: 3 / 2; }
+
+.cms-card__body { display: grid; gap: 0.4rem; }
+.cms-card__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; }
+
+.cms-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--cms-muted);
+  border: 1px solid var(--cms-line);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
+.cms-card__title { margin: 0; font-size: 1.15rem; line-height: 1.3; font-weight: 600; }
+.cms-list--magazine .cms-card__title { font-size: 1.6rem; }
+.cms-list--documentation .cms-card__title { font-size: 1rem; }
+.cms-card__link:hover .cms-card__title { color: var(--cms-accent); }
+
+.cms-card__excerpt { margin: 0; color: var(--cms-muted); line-height: 1.6; }
+.cms-card__meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--cms-muted);
+}
+
+.cms-card--skeleton {
+  height: 9rem;
+  border-radius: var(--cms-radius);
+  background: linear-gradient(90deg, var(--cms-line), var(--cms-surface), var(--cms-line));
+  background-size: 200% 100%;
+  animation: cms-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes cms-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cms-card--skeleton { animation: none; }
+}
+
+.cms-empty,
+.cms-error { color: var(--cms-muted); }
+.cms-error { color: #b91c1c; }
+
+/* ------------------------------------------------------------- article --- */
+
+.cms-article { max-width: var(--cms-measure); margin-inline: auto; }
+.cms-article--documentation { max-width: none; }
+
+.cms-article__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.cms-article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 2rem;
+  font-size: 0.875rem;
+  color: var(--cms-muted);
+}
+.cms-article__cover {
+  width: 100%;
+  border-radius: var(--cms-radius);
+  margin-bottom: 2rem;
+}
+
+.cms-article__body { line-height: 1.75; font-size: 1.02rem; }
+.cms-article__body > * + * { margin-top: 1.1em; }
+.cms-article__body h2 { margin-top: 2.25em; font-size: 1.45rem; line-height: 1.3; }
+.cms-article__body h3 { margin-top: 1.75em; font-size: 1.2rem; }
+.cms-article__body a { color: var(--cms-accent); text-underline-offset: 0.2em; }
+.cms-article__body img { max-width: 100%; height: auto; border-radius: var(--cms-radius); }
+.cms-article__body blockquote {
+  margin-inline: 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--cms-line);
+  color: var(--cms-muted);
+  font-style: italic;
+}
+.cms-article__body pre {
+  overflow-x: auto;
+  padding: 1rem 1.25rem;
+  border-radius: var(--cms-radius);
+  background: #16161a;
+  color: #f4f4f5;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.cms-article__body :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  background: var(--cms-line);
+  font-size: 0.9em;
+}
+.cms-article--skeleton {
+  min-height: 24rem;
+  border-radius: var(--cms-radius);
+  background: var(--cms-line);
+}
+
+/* ----------------------------------------------------------------- faq --- */
+
+.cms-faq { max-width: var(--cms-measure); margin-inline: auto; }
+.cms-faq__heading { font-size: 1.35rem; margin: 0 0 1rem; }
+.cms-faq__list { list-style: none; margin: 0; padding: 0; }
+
+.cms-faq__item { border-top: 1px solid var(--cms-line); }
+.cms-faq__item:last-child { border-bottom: 1px solid var(--cms-line); }
+.cms-faq__question { margin: 0; font-size: inherit; font-weight: inherit; }
+
+.cms-faq__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cms-faq__trigger:hover { color: var(--cms-accent); }
+.cms-faq__trigger:focus-visible { outline: 2px solid var(--cms-accent); outline-offset: 2px; }
+
+.cms-faq__icon {
+  flex: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--cms-muted);
+}
+
+/* Grid-row animation handles answers of any length without a magic max-height. */
+.cms-faq__panel {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 220ms ease;
+}
+.cms-faq__panel[hidden] {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.cms-faq__answer {
+  overflow: hidden;
+  color: var(--cms-muted);
+  line-height: 1.7;
+}
+.cms-faq__item[data-expanded="true"] .cms-faq__answer { padding-bottom: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cms-faq__panel { transition: none; }
+}

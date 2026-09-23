@@ -1,0 +1,232 @@
+// Comlabs CMS — multi-tenant content platform.
+//
+// Every tenant-scoped row carries `orgId`. Nothing in this schema is specific to
+// a single brand: site name, domain, colours and IndexNow keys all live in
+// Organization.settings rather than in code.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Auth. These four models are owned by Better Auth; field names are fixed by
+// its Prisma adapter. Credentials live in Account.password, which is why the
+// plan's `User.passwordHash` does not appear here.
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  /// Org the dashboard opens into. Always one the user is a member of.
+  activeOrgId   String?
+
+  sessions      Session[]
+  accounts      Account[]
+  memberships   OrgMembership[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ---------------------------------------------------------------------------
+// Tenancy
+// ---------------------------------------------------------------------------
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  /// The customer's own website, e.g. "https://example.com". Used for canonical
+  /// URL validation, CORS on the public API and absolute links in the RSS feed.
+  domain    String?
+  /// Free-form org configuration: { indexNowKey, authorName, brand: {...} }
+  settings  Json     @default("{}")
+  plan      String   @default("free")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        OrgMembership[]
+  apiKeys      ApiKey[]
+  contentTypes ContentType[]
+  contents     Content[]
+  media        Media[]
+  webhooks     Webhook[]
+}
+
+model OrgMembership {
+  id     String @id @default(cuid())
+  userId String
+  orgId  String
+  role   String @default("editor") // owner | editor | viewer
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org    Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, orgId])
+  @@index([orgId])
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  orgId     String
+  name      String
+  /// SHA-256 of the raw key. The raw key is shown once, at creation, and never stored.
+  keyHash   String    @unique
+  /// Display-only fragment, e.g. "cm_live_3f9a2b" — enough to tell keys apart.
+  prefix    String
+  scopes    String[]  @default(["read"]) // read | write | admin
+  lastUsed  DateTime?
+  createdAt DateTime  @default(now())
+
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+// ---------------------------------------------------------------------------
+// Content
+// ---------------------------------------------------------------------------
+
+model ContentType {
+  id          String   @id @default(cuid())
+  orgId       String
+  name        String
+  slug        String
+  /// Preset types (blog, case-study) seeded for every org. Their slug is immutable.
+  builtIn     Boolean  @default(false)
+  /// { fields: FieldDefinition[] } — see @comlabs/cms-core `contentTypeSchema`.
+  schema      Json
+  /// { titleField?, bodyField?, imageField?, urlPattern? } — drives auto-SEO.
+  seoTemplate Json?
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  org      Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  contents Content[]
+
+  @@unique([orgId, slug])
+}
+
+model Content {
+  id            String    @id @default(cuid())
+  orgId         String
+  contentTypeId String
+  title         String
+  slug          String
+  /// Values keyed by field definition `key`, validated against the type's schema.
+  fields        Json      @default("{}")
+  status        String    @default("draft") // draft | published | scheduled | archived
+  author        String?
+  publishedAt   DateTime?
+  scheduledAt   DateTime?
+  readingTime   Int?
+
+  metaTitle       String @default("")
+  metaDescription String @default("")
+  excerpt         String @default("")
+  canonicalUrl    String @default("")
+  ogImage         String @default("")
+  /// [{ question, answer }] — rendered as schema.org FAQPage.
+  faqs            Json   @default("[]")
+
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  contentType ContentType  @relation(fields: [contentTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, contentTypeId, slug])
+  @@index([orgId, status])
+  @@index([contentTypeId, status, publishedAt])
+}
+
+model Media {
+  id          String   @id @default(cuid())
+  orgId       String
+  url         String
+  filename    String
+  contentType String
+  size        Int
+  provider    String // local | cloudinary | s3
+  createdAt   DateTime @default(now())
+
+  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId, createdAt])
+}
+
+model Webhook {
+  id        String   @id @default(cuid())
+  orgId     String
+  url       String
+  events    String[] // content.published | content.updated | content.deleted
+  secret    String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}

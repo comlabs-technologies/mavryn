@@ -1,0 +1,74 @@
+# Self-hosted Comlabs CMS.
+#
+#   cd docker
+#   cp .env.example .env      # then edit POSTGRES_PASSWORD and BETTER_AUTH_SECRET
+#   docker compose up --build
+#
+# The app comes up on http://localhost:3000. Migrations run automatically on
+# start; create your first organization through the sign-up page.
+
+name: comlabs-cms
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in docker/.env}
+      POSTGRES_DB: ${POSTGRES_DB:-comlabs_cms}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cms} -d ${POSTGRES_DB:-comlabs_cms}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Not published by default — the database is only reachable from the app.
+    # Uncomment to connect a local client.
+    # ports:
+    #   - "5432:5432"
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-cms}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-comlabs_cms}?schema=public
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in docker/.env}
+      BETTER_AUTH_URL: ${APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
+
+      # Media. `local` keeps uploads on the mounted volume below; switch to
+      # cloudinary or s3 and fill in the matching variables to use an object store.
+      MEDIA_PROVIDER: ${MEDIA_PROVIDER:-local}
+      LOCAL_MEDIA_DIR: /app/.media
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      S3_BUCKET: ${S3_BUCKET:-}
+      S3_REGION: ${S3_REGION:-auto}
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+      S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:-}
+
+      # Optional OAuth. Leave blank to offer email and password only.
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      - media-data:/app/.media
+
+volumes:
+  postgres-data:
+  media-data:
