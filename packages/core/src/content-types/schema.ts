@@ -55,8 +55,8 @@ const subFieldSchema: z.ZodType<SubFieldDefinition> = z.lazy(() =>
     label: z.string().optional(),
     required: z.boolean().optional(),
     options: z.array(z.string()).optional(),
-    schema: z.record(subFieldSchema).optional(),
-    itemSchema: z.record(subFieldSchema).optional(),
+    schema: z.record(z.string(), subFieldSchema).optional(),
+    itemSchema: z.record(z.string(), subFieldSchema).optional(),
     itemType: z.enum(SCALAR_FIELD_TYPES).optional(),
   }),
 );
@@ -73,8 +73,8 @@ export const fieldDefinitionSchema: z.ZodType<FieldDefinition> = z.lazy(() =>
     placeholder: z.string().optional(),
     required: z.boolean().optional(),
     options: z.array(z.string()).optional(),
-    schema: z.record(subFieldSchema).optional(),
-    itemSchema: z.record(subFieldSchema).optional(),
+    schema: z.record(z.string(), subFieldSchema).optional(),
+    itemSchema: z.record(z.string(), subFieldSchema).optional(),
     itemType: z.enum(SCALAR_FIELD_TYPES).optional(),
   }),
 );

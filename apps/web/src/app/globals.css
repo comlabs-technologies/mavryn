@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #fbfbfa;
+  --color-surface: #ffffff;
+  --color-ink: #16161a;
+  --color-muted: #6b6b76;
+  --color-line: #e6e6e3;
+  --color-accent: #1d4ed8;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Shared primitives — small enough to keep inline rather than pull in a UI kit. */
+@layer components {
+  /* Tailwind v4 cannot @apply a class defined in the same layer, so each
+     variant spells out the shared button base rather than composing it. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply bg-[var(--color-accent)] text-white hover:bg-blue-800;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply border border-[var(--color-line)] bg-white text-[var(--color-ink)] hover:bg-neutral-50;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply border border-red-200 bg-white text-red-700 hover:bg-red-50;
+  }
+  .field {
+    @apply w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm outline-none placeholder:text-neutral-400 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-blue-100;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)];
+  }
+  .card {
+    @apply rounded-xl border border-[var(--color-line)] bg-white;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+}
+
+/* Tiptap body styling — mirrors how published content should read. */
+.tiptap {
+  @apply min-h-[24rem] px-4 py-3 text-[15px] leading-7 outline-none;
+}
+.tiptap :where(h2) { @apply mt-6 mb-2 text-xl font-semibold; }
+.tiptap :where(h3) { @apply mt-5 mb-2 text-lg font-semibold; }
+.tiptap :where(p) { @apply my-3; }
+.tiptap :where(ul) { @apply my-3 list-disc pl-6; }
+.tiptap :where(ol) { @apply my-3 list-decimal pl-6; }
+.tiptap :where(blockquote) { @apply my-4 border-l-2 border-[var(--color-line)] pl-4 italic text-[var(--color-muted)]; }
+.tiptap :where(pre) { @apply my-4 overflow-x-auto rounded-lg bg-neutral-900 p-4 text-sm text-neutral-100; }
+.tiptap :where(code):not(pre code) { @apply rounded bg-neutral-100 px-1 py-0.5 text-[0.9em]; }
+.tiptap :where(a) { @apply text-[var(--color-accent)] underline underline-offset-2; }
+.tiptap :where(img) { @apply my-4 max-w-full rounded-lg; }
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  @apply pointer-events-none float-left h-0 text-neutral-400;
+}

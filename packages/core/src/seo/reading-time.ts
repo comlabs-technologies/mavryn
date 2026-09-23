@@ -1,4 +1,4 @@
-import { htmlToText } from "../text.js";
+import { htmlToText } from "../text";
 
 /** Words per minute used for reading-time estimates. */
 export const WORDS_PER_MINUTE = 200;

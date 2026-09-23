@@ -3,7 +3,7 @@ import type {
   FieldDefinition,
   ScalarFieldType,
   SubFieldDefinition,
-} from "./schema.js";
+} from "./schema";
 
 export interface FieldError {
   path: string;

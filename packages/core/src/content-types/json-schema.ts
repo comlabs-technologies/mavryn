@@ -1,4 +1,4 @@
-import type { ContentTypeSchema, SubFieldDefinition } from "./schema.js";
+import type { ContentTypeSchema, SubFieldDefinition } from "./schema";
 
 export type JsonSchema = Record<string, unknown>;
 

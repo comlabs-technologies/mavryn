@@ -1,5 +1,5 @@
-import type { SeoTemplate } from "../seo/auto-metadata.js";
-import type { ContentTypeSchema } from "./schema.js";
+import type { SeoTemplate } from "../seo/auto-metadata";
+import type { ContentTypeSchema } from "./schema";
 
 export interface ContentTypePreset {
   name: string;

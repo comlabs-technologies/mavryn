@@ -1,5 +1,5 @@
 import sanitize from "sanitize-html";
-import { originOf } from "./canonical.js";
+import { originOf } from "./canonical";
 
 export interface SanitizeOptions {
   /** The tenant's own domain. Links to it stay dofollow and same-tab. */

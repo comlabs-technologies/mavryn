@@ -22,11 +22,13 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.3.1"
+    "@prisma/client": "^6.3.1",
+    "@comlabs/cms-core": "workspace:*"
   },
   "devDependencies": {
     "prisma": "^6.3.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "@types/node": "^22.10.7"
   }
 }

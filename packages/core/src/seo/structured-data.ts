@@ -1,4 +1,4 @@
-import { originOf } from "./canonical.js";
+import { originOf } from "./canonical";
 
 export interface Faq {
   question: string;

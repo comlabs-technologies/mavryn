@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { BLOG_PRESET, CASE_STUDY_PRESET } from "../content-types/presets.js";
-import { parseContentTypeSchema } from "../content-types/schema.js";
-import { emptyFields, validateFields } from "../content-types/validate.js";
-import { fieldsJsonSchema } from "../content-types/json-schema.js";
-import { extractApiKey, generateApiKey, hasScope, hashApiKey, hashesMatch } from "../api-key.js";
+import { BLOG_PRESET, CASE_STUDY_PRESET } from "../content-types/presets";
+import { parseContentTypeSchema } from "../content-types/schema";
+import { emptyFields, validateFields } from "../content-types/validate";
+import { fieldsJsonSchema } from "../content-types/json-schema";
+import { extractApiKey, generateApiKey, hasScope, hashApiKey, hashesMatch } from "../server";
 
 describe("content type schema", () => {
   it("accepts both built-in presets", () => {

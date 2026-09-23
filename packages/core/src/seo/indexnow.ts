@@ -1,4 +1,4 @@
-import { originOf } from "./canonical.js";
+import { originOf } from "./canonical";
 
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 /** IndexNow accepts at most 10,000 URLs per submission. */

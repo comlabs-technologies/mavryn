@@ -1,5 +1,5 @@
-import { firstSentence, htmlToText, truncateAtWord } from "../text.js";
-import { contentUrl, resolveCanonical } from "./canonical.js";
+import { firstSentence, htmlToText, truncateAtWord } from "../text";
+import { contentUrl, resolveCanonical } from "./canonical";
 
 /** Hard limits, chosen so Google rarely truncates the rendered snippet. */
 export const SEO_LIMITS = {

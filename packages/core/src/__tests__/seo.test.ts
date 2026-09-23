@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { buildSeo, SEO_LIMITS } from "../seo/auto-metadata.js";
-import { contentUrl, resolveCanonical } from "../seo/canonical.js";
-import { readingTimeFromHtml } from "../seo/reading-time.js";
-import { sanitizeContentHtml } from "../seo/sanitize-html.js";
-import { buildFaqSchema, buildStructuredData } from "../seo/structured-data.js";
-import { submitToIndexNow } from "../seo/indexnow.js";
-import { htmlToText, truncateAtWord } from "../text.js";
-import { slugify, uniqueSlug } from "../slug.js";
+import { buildSeo, SEO_LIMITS } from "../seo/auto-metadata";
+import { contentUrl, resolveCanonical } from "../seo/canonical";
+import { readingTimeFromHtml } from "../seo/reading-time";
+import { sanitizeContentHtml } from "../server";
+import { buildFaqSchema, buildStructuredData } from "../seo/structured-data";
+import { submitToIndexNow } from "../seo/indexnow";
+import { htmlToText, truncateAtWord } from "../text";
+import { slugify, uniqueSlug } from "../slug";
 
 describe("text", () => {
   it("separates block elements with whitespace", () => {
